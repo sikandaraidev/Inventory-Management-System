@@ -1,7 +1,3 @@
-Sure! Here's a clean, **effective, professional README** template tailored to your **Flask Inventory Management API**, optimized for GitHub:
-
----
-
 # 🗃️ Flask Inventory Management API
 
 A secure, modular, role-based inventory management API built with **Flask**, **SQLAlchemy**, and **MongoDB (MongoEngine)**. Designed for internal dashboards with JWT session auth, RBAC (admin/staff), and scalable product metadata management.
@@ -169,13 +165,3 @@ Each product in MySQL is synced with an extended metadata document in MongoDB:
 📧 [sikandaraidev@gmail.com](mailto:your.email@example.com)
 🔗 [LinkedIn](https://linkedin.com/in/sikandaraidev) • [GitHub](https://github.com/sikandaraidev)
 
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
-See `LICENSE` for more information.
-
----
-
-Would you like help filling in your actual repo name, endpoint table, or screenshots section?
