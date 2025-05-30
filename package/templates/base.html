@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" x-data="layout()" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-100 text-gray-900 h-full">
+
+<!-- Header -->
+<header class="flex items-center justify-between bg-gray-800 text-white px-6 py-3">
+  <!-- Hamburger always visible -->
+  <button @click="sidebarOpen = !sidebarOpen" class="text-white-700 focus:outline-none" aria-label="Toggle sidebar">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+
+  <h1 class="text-xl font-semibold">Inventory Management System</h1>
+
+  <!-- Right side: Account bubble + dropdown -->
+    <div class="relative" x-data="{ open: false }">
+        <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold uppercase">
+                {% if user and user.username %}{{ user.username[0]|upper }}{% else %}?{% endif %}
+            </div>
+            <span>{{ user.username | capitalize }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+        
+        <!-- Dropdown menu -->
+        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 bg-white border rounded shadow p-2">
+          <p class="px-2 py-1 text-sm text-gray-700">{{ user.email }}</p>
+          <form action="{{ url_for('frontend.logout') }}" method="POST" class="mt-2">
+              <button type="submit" class="w-full text-left px-2 py-1 text-red-600 hover:bg-red-50 rounded">
+                  Logout
+              </button>
+          </form>
+        </div>
+    </div>
+
+</header>
+
+
+  <!-- Sidebar + Main Content -->
+  <div class="flex h-[calc(100vh-64px)]">
+  <!-- Sidebar -->
+  <aside
+    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'"
+    class="fixed top-16 left-0 w-64 h-[calc(100vh-64px)] bg-gray-800 text-white p-4 transform transition-transform duration-300 ease-in-out"
+  >
+
+    <nav class="space-y-2 mt-4">
+      <a href="{{ url_for('frontend.dashboard') }}" class="block hover:bg-gray-700 px-3 py-2 rounded">Dashboard</a>
+      <a href="{{ url_for('frontend.list_products') }}" class="block hover:bg-gray-700 px-3 py-2 rounded">Products</a>
+      <a href="{{ url_for('frontend.list_categories') }}" class="block hover:bg-gray-700 px-3 py-2 rounded">Categories</a>
+      <a href="{{ url_for('frontend.list_suppliers') }}" class="block hover:bg-gray-700 px-3 py-2 rounded">Suppliers</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main
+    class="flex-1 p-6 transition-all duration-300 ml-64"
+    :class="sidebarOpen ? 'ml-64' : 'ml-0'"
+  >
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script>
+function layout() {
+  return {
+    sidebarOpen: true
+  }
+}
+</script>
+
+<!-- Make sure Alpine.js is included for dropdown -->
+<script src="//unpkg.com/alpinejs" defer></script>
+
+</body>
+</html>

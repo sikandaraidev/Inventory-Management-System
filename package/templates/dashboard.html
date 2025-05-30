@@ -1,0 +1,48 @@
+<!-- templates/dashboard.html -->
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Welcome, {{ user.username | capitalize }}</h2>
+
+<p class="text-sm italic text-gray-500 mb-4">Your role: <strong>{{ user.role }}</strong></p>  {# DEBUG line to check role #}
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Products -->
+    <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-lg font-bold mb-2">Products</h3>
+        <p class="text-3xl font-semibold text-blue-600">{{ stats.products | default(0) }}</p>
+    </div>
+
+    <!-- Categories -->
+    <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-lg font-bold mb-2">Categories</h3>
+        <p class="text-3xl font-semibold text-green-600">{{ stats.categories | default(0) }}</p>
+    </div>
+
+    <!-- Suppliers -->
+    <div class="bg-white p-6 rounded shadow">
+        <h3 class="text-lg font-bold mb-2">Suppliers</h3>
+        <p class="text-3xl font-semibold text-yellow-600">{{ stats.suppliers | default(0) }}</p>
+    </div>
+</div>
+
+{% if user.role == 'admin' %}
+<!-- Admin-only section -->
+<div class="bg-white p-6 rounded shadow">
+    <h3 class="text-lg font-bold mb-4">Admin Controls</h3>
+    <div class="flex flex-wrap gap-4">
+        <a href="{{ url_for('frontend.list_products') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Manage Products</a>
+        <a href="{{ url_for('frontend.list_categories') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Manage Categories</a>
+        <a href="{{ url_for('frontend.list_suppliers') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Manage Suppliers</a>
+    </div>
+</div>
+{% else %}
+<!-- Staff-only note -->
+<div class="bg-white p-4 rounded shadow text-sm mt-6">
+    <p>You have read-only access as a <strong>staff</strong> user.</p>
+</div>
+{% endif %}
+
+{% endblock %}

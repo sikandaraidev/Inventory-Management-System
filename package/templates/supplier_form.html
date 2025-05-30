@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">
+  {% if supplier %}Edit{% else %}Add{% endif %} Supplier
+</h1>
+
+<form method="POST" action="{{ form_action }}" class="max-w-lg space-y-4">
+  <div>
+    <label class="block font-semibold">Name</label>
+    <input type="text" name="name" required
+           value="{{ supplier.name if supplier else '' }}"
+           class="w-full border border-gray-300 rounded px-3 py-2">
+  </div>
+
+  <div>
+    <label class="block font-semibold">Contact Name</label>
+    <input type="text" name="contact_name"
+           value="{{ supplier.contact_name if supplier else '' }}"
+           class="w-full border border-gray-300 rounded px-3 py-2">
+  </div>
+
+  <div>
+    <label class="block font-semibold">Email</label>
+    <input type="email" name="email"
+           value="{{ supplier.email if supplier else '' }}"
+           class="w-full border border-gray-300 rounded px-3 py-2">
+  </div>
+
+  <div>
+    <label class="block font-semibold">Phone</label>
+    <input type="tel" name="phone"
+           value="{{ supplier.phone if supplier else '' }}"
+           class="w-full border border-gray-300 rounded px-3 py-2">
+  </div>
+
+  <div>
+    <label class="block font-semibold">Address</label>
+    <textarea name="address" rows="3"
+              class="w-full border border-gray-300 rounded px-3 py-2">{{ supplier.address if supplier else '' }}</textarea>
+  </div>
+
+  <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+    {% if supplier %}Update{% else %}Add{% endif %} Supplier
+  </button>
+  <a href="{{ url_for('frontend.list_suppliers') }}" class="ml-4 text-gray-600 hover:underline">Cancel</a>
+</form>
+{% endblock %}

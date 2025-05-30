@@ -1,0 +1,57 @@
+<!-- templates/supplier_list.html -->
+{% extends "base.html" %}
+
+{% block title %}Suppliers{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Supplier List</h2>
+
+{% if current_user.role == 'admin' %}
+<div class="mb-4">
+    <a href="{{ url_for('frontend.add_supplier') }}"
+       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">+ Add Supplier</a>
+</div>
+{% endif %}
+
+<div class="overflow-x-auto">
+    <table class="w-full bg-white rounded shadow">
+        <thead class="bg-gray-200 text-left text-sm">
+            <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">Name</th>
+                <th class="p-3">Contact</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Phone</th>
+                <th class="p-3">Address</th>
+                {% if current_user.role == 'admin' %}
+                <th class="p-3">Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for supplier in suppliers %}
+            <tr class="border-t text-sm">
+                <td class="p-3">{{ loop.index }}</td>
+                <td class="p-3">{{ supplier.name }}</td>
+                <td class="p-3">{{ supplier.contact_name }}</td>
+                <td class="p-3">{{ supplier.email }}</td>
+                <td class="p-3">{{ supplier.phone }}</td>
+                <td class="p-3">{{ supplier.address }}</td>
+                {% if current_user.role == 'admin' %}
+                <td class="p-3 space-x-2">
+                    <a href="{{ url_for('frontend.edit_supplier', supplier_id=supplier.supplier_id) }}"
+                       class="bg-yellow-400 text-white px-3 py-1 rounded text-xs hover:bg-yellow-500">Edit</a>
+                    <form method="POST"
+                          action="{{ url_for('frontend.delete_supplier', supplier_id=supplier.supplier_id) }}"
+                          style="display:inline;" onsubmit="return confirm('Delete this supplier?');">
+                        <button type="submit"
+                                class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Delete</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

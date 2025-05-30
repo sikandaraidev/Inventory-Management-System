@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management App - Login</title>
+    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='css/signup.css') }}">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar placeholder matching signup page -->
+        <aside class="sidebar" aria-label="Main navigation">
+            <div class="sidebar-header">
+                <h1>Inventory</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('frontend.login') }}" aria-current="page">Login</a></li>
+                    <li><a href="{{ url_for('frontend.signup') }}">Sign Up</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h2>Login to Inventory Management System</h2>
+                <p class="subtitle">Access your inventory dashboard</p>
+            </header>
+
+            <div class="auth-container">
+                <form id="loginForm" class="auth-form" novalidate>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" id="email" name="email" required aria-required="true" autocomplete="email">
+                        <div id="emailError" class="error-message" aria-live="polite"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password_hash" name="password_hash" required aria-required="true" autocomplete="current-password">
+                            <button type="button" class="toggle-password" aria-label="Show password">👁️</button>
+                        </div>
+                        <div id="passwordError" class="error-message" aria-live="polite"></div>
+                    </div>
+
+
+                    <button type="submit" class="submit-btn">Log In</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="{{ url_for('frontend.signup') }}">Sign up</a></p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite" role="alert"></div>
+
+    <script src="{{ url_for('frontend.static', filename='js/login.js') }}"></script>
+</body>
+</html>

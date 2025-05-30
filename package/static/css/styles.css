@@ -1,0 +1,7 @@
+html, body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+aside a.active {
+    background-color: #4B5563; /* tailwind's gray-700 */
+}
