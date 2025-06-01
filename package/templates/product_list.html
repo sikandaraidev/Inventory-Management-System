@@ -38,13 +38,13 @@
         </thead>
         <tbody>
             {% for product in products %}
-            <tr class="border-t text-sm hover:bg-gray-100">
+            <tr class="border-t text-sm hover:bg-gray-100" onclick="window.location.href='/product-meta/{{ product.product_id }}'">
                 <td class="p-3">{{ loop.index }}</td>
                 <td class="p-3">{{ product.name }}</td>
                 <td class="p-3">{{ product.sku }}</td>
                 <td class="p-3">{{ product.category_name }}</td>
                 <td class="p-3">{{ product.supplier_name }}</td>
-                <td class="p-3">₹{{ "%.2f"|format(product.selling_price) }}</td>
+                <td class="p-3">{{ "%.2f"|format(product.selling_price) }}</td>
                 <td class="p-3">{{ product.quantity_in_stock }}</td>
                 <td class="p-3">{{ product.expiry_date }}</td>
 

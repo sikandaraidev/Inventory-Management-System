@@ -43,7 +43,7 @@ def create_app(config_name="dev"):
     app.config["JWT_REFRESH_COOKIE_PATH"] = "/token/refresh"
     app.config["JWT_COOKIE_SECURE"] = False  # TRUE for only over HTTPS in production
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # enable in production
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=30)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=60)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
     app.config["JWT_COOKIE_SAMESITE"] = "Lax"
 
@@ -77,20 +77,20 @@ def create_app(config_name="dev"):
     # Error handling
     register_error_handlers(app)
 
-    # @app.context_processor
-    # @jwt_required(optional=True)
-    # def inject_user():
-    #     identity = get_jwt_identity()
-    #     user = None
-    #     user_role = None
+    @app.context_processor
+    @jwt_required(optional=True)
+    def inject_user():
+        identity = get_jwt_identity()
+        user = None
+        user_role = None
 
-    #     if identity:
-    #         db = next(get_session())  # get SQLAlchemy session
-    #         user = db.query(User).filter_by(user_id=identity).first()
-    #         if user:
-    #             user_role = user.role
+        if identity:
+            db = next(get_session())  # get SQLAlchemy session
+            user = db.query(User).filter_by(user_id=identity).first()
+            if user:
+                user_role = user.role
 
-    #     return dict(user=user, user_role=user_role)
+        return dict(user=user, user_role=user_role)
 
     @app.template_filter("datetimeformat")
     def datetimeformat(value, format="%Y-%m-%d"):

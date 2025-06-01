@@ -1,6 +1,8 @@
 from flask import (
     Blueprint,
+    # abort,
     flash,
+    jsonify,
     make_response,
     redirect,
     render_template,
@@ -15,10 +17,18 @@ from package.backend.databases.Inventory.models_inv.product_model import Product
 from package.backend.databases.Inventory.models_inv.supplier_model import Supplier
 from package.backend.databases.Inventory.models_inv.user_model import User
 
-# from package.backend.databases.product_log.models_prod_log.prod_meta_model import (
-#     ProductMetadataModel,
+# from package.backend.databases.product_log.schema_prod_log.prod_meta_schema import (
+#     ProductMetadataSchema,
 # )
+from package.backend.databases.product_log.service_prod_log import prod_meta_service
 from package.backend.db_conn.aws_mysql import get_session
+
+
+def serialize_mongo_doc(doc):
+    data = doc.to_mongo().to_dict()
+    data["_id"] = str(data["_id"])  # convert ObjectId to str
+    return data
+
 
 frontend_bp = Blueprint(
     "frontend",
@@ -370,3 +380,84 @@ def delete_supplier(supplier_id):
     db.commit()
     flash("Supplier deleted successfully", "success")
     return redirect(url_for("frontend.list_suppliers"))
+
+
+# Product Page render for Product Metadara
+@frontend_bp.route("/product-meta/<int:product_id>")
+@role_required(["admin", "staff"])
+def render_product_meta_page(product_id):
+    """
+    Renders the HTML page for managing product metadata.
+    """
+    product = prod_meta_service.get_product_metadata(product_id)
+    db = next(get_session())
+    product = db.query(Product).filter_by(product_id=product_id).first()
+    if not product:
+        return "Product not found", 404
+
+    # Resolve related fields manually
+    category_name = None
+    supplier_name = None
+
+    if product.category_id:
+        category = db.query(Category).filter_by(category_id=product.category_id).first()
+        category_name = category.name if category else None
+
+    if product.supplier_id:
+        supplier = db.query(Supplier).filter_by(supplier_id=product.supplier_id).first()
+        supplier_name = supplier.name if supplier else None
+
+    return render_template(
+        "new_product_meta.html",
+        product=product,
+        category_name=category_name,
+        supplier_name=supplier_name,
+        product_id=product.product_id,
+    )
+
+
+# Product Metadata CRUD route
+@frontend_bp.route("/api/meta/<int:product_id>", methods=["GET"])
+@role_required(["admin", "staff"])
+def get_product_metadata(product_id):
+    meta = prod_meta_service.get_product_metadata(product_id)
+    if meta:
+        return jsonify(serialize_mongo_doc(meta)), 200
+    return jsonify({"message": "No metadata found"}), 404
+
+
+@frontend_bp.route("/api/meta/<int:product_id>", methods=["POST"])
+@role_required(["admin"])
+def create_product_metadata(product_id):
+    product = prod_meta_service.get_product_metadata(product_id)
+    if not product:
+        return jsonify({"message": "Product not found"}), 404
+
+    try:
+        new_meta = prod_meta_service.create_product_metadata(product)
+        return jsonify(serialize_mongo_doc(new_meta)), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@frontend_bp.route("/api/meta/<int:product_id>", methods=["PUT"])
+@role_required(["admin"])
+def update_product_metadata(product_id):
+    updates = request.get_json()
+    try:
+        updated_meta = prod_meta_service.update_product_metadata(product_id, updates)
+        if not updated_meta:
+            return jsonify({"message": "Metadata not found"}), 404
+        return jsonify(serialize_mongo_doc(updated_meta)), 200
+        # return jsonify(updated_meta.to_mongo()), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@frontend_bp.route("/api/meta/<int:product_id>", methods=["DELETE"])
+@role_required(["admin"])
+def delete_product_metadata(product_id):
+    deleted = prod_meta_service.delete_product_metadata(product_id)
+    if deleted:
+        return jsonify({"message": "Metadata deleted"}), 200
+    return jsonify({"message": "Metadata not found"}), 404
